@@ -40,24 +40,6 @@ server.listen(app.get('port'), () => {
 });
 
 //Connect to the database
-/*
-mongoose.Promise = global.Promise;
-
-mongoose.connect('mongodb://localhost:27017/rarepupper_users');
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, '# Mongo DB: connection error:'));
-db.once('open', function (callback) {
-  console.log("# Mongo DB:  Connected to server");
-});
-
-var Schema = mongoose.Scshema,
-  ObjectId = Schema.ObjectID;
-
-var User = new Schema({
-	score: { type: Number, required: true }
-});
-var User = mongoose.model('User', User);
-*/
 
 // Make our db accessible to our router
 app.use(function(req,res,next){
@@ -174,7 +156,7 @@ function switchImage(){
 		}
 	})
 
-	setTimeout(switchImage, 3000);
+	setTimeout(switchImage, 30000);
 }
 
 function getClientPath(fileName) {

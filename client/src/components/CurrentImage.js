@@ -1,5 +1,6 @@
 import React from 'react';
-import { Image } from 'semantic-ui-react'
+import { Image   } from 'semantic-ui-react'
+
 
 /**
 * React component displays the current image

@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button } from 'semantic-ui-react'
 
 /**
 * React component displays the current image
