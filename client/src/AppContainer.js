@@ -23,19 +23,17 @@ class AppContainer extends React.Component {
     // Creating the socket-client instance will automatically connect to the server.
     this.socket = io('http://localhost:3000', {query: "user_id=" + userId});
 
-
-
   }
 
   componentDidMount() {
     const cookies = new Cookies();
 
-      this.socket.on('user', (data) => {
-        this.setState({
-          user: data
-        });
+    this.socket.on('user', (data) => {
+      this.setState({
+        user: data
+      });
 
-        cookies.set('user_id', data.id, { path: '/' });
+      cookies.set('user_id', data.id, { path: '/' });
     });
 
     this.socket.on('updateCurrentImage', (data) => {

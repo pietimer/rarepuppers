@@ -1,4 +1,4 @@
-//start database by mongod --dbpath C:\Users\mkkro\OneDrive\Documents\node\rarepuppers\data
+//start database by mongod --dbpath D:\development\node\rarepuppers\data
 
 //requirements
 var express = require("express"),
@@ -9,6 +9,12 @@ var express = require("express"),
   mongoose = require('mongoose'),
 	pupSwitcher = require('./pupSwitcher'),
 	socketio = require('socket.io');
+
+var mongo = require('mongodb'),
+	monk = require('monk'),
+  db = monk('localhost:27017/rarepupper_users');
+
+
 
 var	clients = [],
 	uploadedFiles = [],
@@ -34,22 +40,31 @@ server.listen(app.get('port'), () => {
 });
 
 //Connect to the database
+/*
 mongoose.Promise = global.Promise;
+
 mongoose.connect('mongodb://localhost:27017/rarepupper_users');
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, '# Mongo DB: connection error:'));
 db.once('open', function (callback) {
   console.log("# Mongo DB:  Connected to server");
 });
-//var userCollection = db.collection("users");
 
-var Schema = mongoose.Schema
-      , ObjectId = Schema.ObjectID;
+var Schema = mongoose.Scshema,
+  ObjectId = Schema.ObjectID;
 
 var User = new Schema({
 	score: { type: Number, required: true }
 });
 var User = mongoose.model('User', User);
+*/
+
+// Make our db accessible to our router
+app.use(function(req,res,next){
+    req.db = db;
+    next();
+});
+var userCollection = db.get('users');
 
 // The event will be called when a client is connected.
 io.on('connection', function (socket) {
@@ -64,8 +79,11 @@ io.on('connection', function (socket) {
 	}
 	//otherwise, find the existing entry
 	else {
-		User.findOne({ '_id': user_id }, 'score, _id', function (err, user) {
-		  if (err) return handleError(err);
+		userCollection.findOne({ '_id': user_id }, function (err, user) {
+		  if (err) {
+				return handleError(err);
+			}
+
 			if(user){
 				var newUser = { id: user._id, score: user.score };
 				clients[user._id] = socket.id;
@@ -112,7 +130,6 @@ app.post('/api/upload', function(req, res) {
 
 		uploadedFiles[filename.toLowerCase()] = userId;  //probably should put a safety null check here...
 
-		res.redirect('/');
 	})
 })
 
@@ -173,28 +190,24 @@ function getFileName(fullPath){
 }
 
 function sendUser(newUser){
+	console.log("sending user: " + newUser.id + " " + newUser.score);
 	io.emit("user", newUser);
 }
 
 function createNewUser(socketId){
-	var user_data = {
-			score: 0
-	};
+	var user = { score: 0 };
 
-	user = new User(user_data);
+  db.collection("users").insert(user, function(error, data) {
+		if(error){
+				console.log(error);
+		}
+		else {
+				var newUser = { id: data._id, score: 0 };
+				sendUser(newUser);
 
-	user.save(function(error, data){
-			if(error){
-					console.log(error);
-			}
-			else{
-					var newUser = { id: data._id, score: 0 };
-					sendUser(newUser);
-			}
+				clients[user._id] = socketId;
+		}
 	});
-
-	//question: could this be a problem if the user.save isn't done?
-	clients[user._id] = socketId;
 }
 
 function tallyVotes(votes, currentFilename) {
@@ -226,11 +239,16 @@ function tallyVotes(votes, currentFilename) {
 
 	});
 
-	User.findOne({ '_id': userId }, 'score', function (err, user) {
+	userCollection.findOne({ '_id': userId }, 'score', function (err, user) {
 		var currentScore = user.score;
-		var newScore = currentScore + voteTotal;
+	 	var newScore = currentScore + voteTotal;
 
-		User.update({_id: userId}, {$set: {score: newScore}});
+		userCollection.update({'_id': userId}, {$set: {'score': newScore}});
+
+		var socketId = clients[userId];
+
+		if (socketId) {
+			io.to(socketId).emit('score', newScore);
+		}
 	});
-
 }

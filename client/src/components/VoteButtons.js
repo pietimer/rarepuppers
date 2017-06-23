@@ -1,8 +1,7 @@
 import React from 'react';
-import { Button } from 'semantic-ui-react'
 
 /**
-* React component displays the current image
+* React component displays the current score
 * @class
 */
 class VoteButtons extends React.Component {

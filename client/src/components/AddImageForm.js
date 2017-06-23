@@ -20,8 +20,8 @@ class AddImageForm extends React.Component {
     this.props.onSelectImage(file);
   }
 
-
   handleClick(e){
+    e.preventDefault();
     this.refs.fileUploader.click(e);
   }
 
@@ -35,9 +35,7 @@ class AddImageForm extends React.Component {
           ref="fileUploader"
           style={{display: "none"}}
           onChange={(e) => this.onImageSelect(e)} />
-        <Button
-          type="submit"
-          onClick={(e) => this.handleClick(e)}>submit ur own pupper</Button>
+        <Button onClick={(e) => this.handleClick(e)}>submit ur own pupper</Button>
       </div>
     )
   }

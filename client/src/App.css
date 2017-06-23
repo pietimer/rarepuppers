@@ -10,11 +10,59 @@
   margin: 0 auto;
 
   max-width: 300px;
-  max-height: 300px;
+  max-height: 200px;
 }
 
 
 .divVoteButtons {
   display: flex;
   justify-content: center;
+}
+
+/*score*/
+.score{
+  text-align:center;
+  color:#000000;
+  font-size:150%;
+  font-family:arial, helvetica, sans-serif;
+}
+
+score_data {
+    font-weight:bold;
+}
+.amazing_score {
+   /* Chrome, Safari, Opera */
+  -webkit-animation: rainbow 1s infinite;
+
+  /* Internet Explorer */
+  -ms-animation: rainbow 1s infinite;
+
+  /* Standar Syntax */
+  animation: rainbow 1s infinite;
+}
+
+/* Chrome, Safari, Opera */
+@-webkit-keyframes rainbow{
+	20%{color: red;}
+	40%{color: yellow;}
+	60%{color: green;}
+	80%{color: blue;}
+	100%{color: orange;}
+}
+/* Internet Explorer */
+@-ms-keyframes rainbow{
+	20%{color: red;}
+	40%{color: yellow;}
+	60%{color: green;}
+	80%{color: blue;}
+	100%{color: orange;}
+}
+
+/* Standar Syntax */
+@keyframes rainbow{
+	20%{color: red;}
+	40%{color: yellow;}
+	60%{color: green;}
+	80%{color: blue;}
+	100%{color: orange;}
 }
